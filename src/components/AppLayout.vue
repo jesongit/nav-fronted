@@ -1,74 +1,68 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeMount } from 'vue'
 
 const text = ref('')
-
-const links = ref([
-    { key: 'bd1', name: '百度', link: 'https://www.baidu.com' },
-    { key: 'bd2', name: '百度', link: 'https://www.baidu.com' },
-    { key: 'bd3', name: '百度', link: 'https://www.baidu.com' },
-    { key: 'bd4', name: '百度', link: 'https://www.baidu.com' },
-    { key: 'bd5', name: '百度', link: 'https://www.baidu.com' },
-    { key: 'bd6', name: '百度', link: 'https://www.baidu.com' },
-    { key: 'bd7', name: '百度', link: 'https://www.baidu.com' },
-    { key: 'bd8', name: '百度', link: 'https://www.baidu.com' },
-    { key: 'bd9', name: '百度', link: 'https://www.baidu.com' },
-    { key: 'bd10', name: '百度', link: 'https://www.baidu.com' },
-])
+const links = ref([{ key: 'bk', name: '百度', link: 'https://www.baidu.com' }])
+const links_url = 'https://raw.githubusercontent.com/jesongit/nav/master/config.json'
 
 const search = computed(() => {
-    if(text.value == '')
-        return links.value
-    return links.value.filter((item) => item.key.includes(text.value))
+  if (text.value == '') return links.value
+  return links.value.filter((item) => item.key.includes(text.value))
 })
 
 function openLink(link: string) {
-    window.open(link, '_blank')
+  window.open(link, '_blank')
 }
 
+async function getRemoteJson(url: string): Promise<any> {
+  try {
+    const response = await fetch(url)
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('获取远程JSON文件失败:', error)
+  }
+}
+
+function refresh() {
+  getRemoteJson(links_url).then((data) => {
+    console.log(data)
+    links.value = data.links
+  })
+}
+
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === 'Enter') {
+    openLink(search.value[0].link)
+  } else if (event.key === 'Escape') {
+    text.value = ''
+  }
+}
+
+onBeforeMount(() => {
+  refresh()
+})
 </script>
 
-
 <template>
-    <q-layout view="hHh LpR fff">
-
-        <!-- <q-header elevated class="bg-primary text-white">
-      <q-toolbar>
-        <q-toolbar-title>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
-          </q-avatar>
-          J
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-header> -->
-
-        <q-page-container>
-            <!-- <router-view /> -->
-            <div class="row q-mt-md">
-                <div class="col"> </div>
-                <div class="col-6">
-                    <q-input outlined v-model="text" />
-                    <div class="row justify-center q-mt-sm q-gutter-sm">
-                        <q-btn outline 
-                        @click="openLink(link)" 
-                        :label="name" v-for="{ key, name, link } in search" :key="key"/>
-                    </div>
-                </div>
-                <div class="col"> </div>
-            </div>
-        </q-page-container>
-
-        <!-- <q-footer bordered class="bg-grey-8 text-white">
-      <q-toolbar>
-        <q-toolbar-title>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
-          </q-avatar>
-          <div>Title</div>
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-footer> -->
-
-    </q-layout>
+  <q-layout view="hHh LpR fff">
+    <q-page-container>
+      <div class="row q-mt-md">
+        <div class="col"></div>
+        <div class="col-6">
+          <q-input autofocus outlined v-model="text" @keydown="handleKeydown" />
+          <div class="row justify-center q-mt-sm q-gutter-sm">
+            <q-btn
+              outline
+              @click="openLink(link)"
+              :label="name"
+              v-for="{ key, name, link } in search"
+              :key="key"
+            />
+          </div>
+        </div>
+        <div class="col"></div>
+      </div>
+    </q-page-container>
+  </q-layout>
 </template>

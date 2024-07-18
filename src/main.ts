@@ -14,7 +14,7 @@ import App from './App.vue'
 const app = createApp(App)
 
 app.use(Quasar, {
-  plugins: {}, // import Quasar plugins and add here
+  plugins: {} // import Quasar plugins and add here
 })
 // app.use(createPinia())
 // app.use(router)

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// import { RouterLink, RouterView } from 'vue-router'
-// import HelloWorld from './components/HelloWorld.vue'
 import AppLayout from './components/AppLayout.vue'
 </script>
 
@@ -8,5 +6,4 @@ import AppLayout from './components/AppLayout.vue'
   <AppLayout />
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
