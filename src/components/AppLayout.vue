@@ -3,7 +3,6 @@ import { ref, computed} from 'vue'
 
 const text = ref('')
 const links = ref([])
-const links_url = 'https://raw.githubusercontent.com/jesongit/nav/master/config.json'
 
 const search = computed<any>(() => {
   if (text.value == '') return links.value
@@ -14,23 +13,6 @@ function openLink(link: string) {
   window.open(link, '_blank')
 }
 
-async function getRemoteJson(url: string): Promise<any> {
-  try {
-    const response = await fetch(url)
-    const data = await response.json()
-    return data
-  } catch (error) {
-    console.error('获取远程JSON文件失败:', error)
-  }
-}
-
-function refresh() {
-  getRemoteJson(links_url).then((data) => {
-    console.log(data)
-    links.value = data.links
-  })
-}
-
 function handleKeydown(event: KeyboardEvent) {
   if (event.key === 'Enter') {
     openLink(search.value[0].link)
@@ -39,7 +21,14 @@ function handleKeydown(event: KeyboardEvent) {
   }
 }
 
-refresh()
+fetch('links.json')
+  .then(response => response.json())
+  .then(data => {
+    links.value = data;
+  })
+  .catch(error => {
+    console.log(error);
+  });
 </script>
 
 <template>
