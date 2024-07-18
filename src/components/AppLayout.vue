@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref, computed, onBeforeMount } from 'vue'
+import { ref, computed} from 'vue'
 
 const text = ref('')
-const links = ref([{ key: 'bk', name: '百度', link: 'https://www.baidu.com' }])
+const links = ref([])
 const links_url = 'https://raw.githubusercontent.com/jesongit/nav/master/config.json'
 
-const search = computed(() => {
+const search = computed<any>(() => {
   if (text.value == '') return links.value
-  return links.value.filter((item) => item.key.includes(text.value))
+  return links.value.filter((item: any) => item.key.includes(text.value))
 })
 
 function openLink(link: string) {
@@ -39,9 +39,7 @@ function handleKeydown(event: KeyboardEvent) {
   }
 }
 
-onBeforeMount(() => {
-  refresh()
-})
+refresh()
 </script>
 
 <template>
@@ -54,6 +52,7 @@ onBeforeMount(() => {
           <div class="row justify-center q-mt-sm q-gutter-sm">
             <q-btn
               outline
+              color="primary"
               @click="openLink(link)"
               :label="name"
               v-for="{ key, name, link } in search"
